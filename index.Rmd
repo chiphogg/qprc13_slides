@@ -8,6 +8,29 @@ highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
 widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
+
+```{r setup, include=FALSE}
+require(knitr)
+require(gppois)
+require(ggplot2)
+require(Cairo)
+opts_chunk$set(fig.width=13, fig.height=5, warning=FALSE, cache=TRUE,
+  dev='CairoPNG', echo=FALSE)
+theme_set(theme_classic(40))
+knit_hooks$set(webgl = function(before, options, envir) {
+  library(rgl)
+  ## after a chunk has been evaluated
+  if (before || rgl.cur() == 0) return()  # no active device
+  name <- sprintf('rgl_%s.html', options$label)
+  par3d(windowRect = 100 + options$dpi * c(0, 0, options$fig.width, options$fig.height))
+  Sys.sleep(.05) # need time to respond to window size change
+  writeLines(c('%WebGL%', '<script>webGLStart();</script>'), tpl <- tempfile())
+  writeWebGL(dir = dirname(name), filename = name, template = tpl)
+  sprintf('<iframe src="%s" width="%s" height="%s"></iframe>', name,
+    options$dpi * options$fig.width, options$dpi * options$fig.height)
+})
+```
+
 ---
 
 # Overview
