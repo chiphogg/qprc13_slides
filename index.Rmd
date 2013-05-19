@@ -22,7 +22,9 @@ knit_hooks$set(webgl = function(before, options, envir) {
   ## after a chunk has been evaluated
   if (before || rgl.cur() == 0) return()  # no active device
   name <- sprintf('rgl_%s.html', options$label)
-  par3d(windowRect = 100 + options$dpi * c(0, 0, options$fig.width, options$fig.height))
+  par3d(windowRect = 100 + options$dpi * c(0, 0,
+                                           options$fig.width,
+                                           options$fig.height))
   Sys.sleep(.05) # need time to respond to window size change
   writeLines(c('%WebGL%', '<script>webGLStart();</script>'), tpl <- tempfile())
   writeWebGL(dir = dirname(name), filename = name, template = tpl)
@@ -37,13 +39,100 @@ knit_hooks$set(webgl = function(before, options, envir) {
 
 The basic story is this.
 
-We've got a metal plate, and we stretch it.  So there's some amount of strain at every point on this surface.  We've measured this strain function at a bunch of points, but we wish we knew it everywhere.  We wish we knew this _strain surface_, if you like.  We have some idea about it, but we're not completely certain.
+We've got a metal plate, and we stretch it.  So there's some amount of strain at
+every point on this surface.  We've measured this strain function at a bunch of
+points, but we wish we knew it everywhere.  We wish we knew this _strain
+surface_, if you like.  We have some idea about it, but we're not completely
+certain.
 
-So, first question: how uncertain _are_ we?  You see we'll need a sensible way to _quantify_ uncertainty in _continuous functions_.
+So, first question: how uncertain _are_ we?  You see we'll need a sensible way
+to _quantify_ uncertainty in _continuous functions_.
 
 ---
 
 # Quantifying uncertainty
+
+---
+
+## Two variables
+
+```{r scatterplot.function, cache=FALSE, include=FALSE}
+twod_scatterplot <- function(n, old=0) {
+  # A 2d scatterplot of draws from a bivariate normal.
+  #
+  # Args:
+  #   n: The number of points to plot
+  #   old: The number of points considered "old" (might be greyed out).
+  set.seed(1)
+  covariance <- 0.8
+  L <- t(chol(matrix(c(1, covariance, covariance, 1), nrow=2)))
+  x <- L %*% matrix(rnorm(n=2 * n), nrow=2)
+  d <- data.frame(x=x[1, ], y=x[2, ], type=c(rep('a', old), rep('b', n - old)))
+  lim <- 3
+  p <- (ggplot(data=d, aes(x=x, y=y, colour=type))
+    + geom_point(size=2)
+    + scale_x_continuous("X1", limits=c(-lim, lim))
+    + scale_y_continuous("X2", limits=c(-lim, lim))
+    + scale_colour_manual(values=c(a='grey40', b='black'))
+    + theme(legend.position='none')
+    )
+  return (p)
+}
+num <- 0
+```
+
+
+```{r scatterplot.test.1, cache=FALSE, fig.width=7, fig.height=7}
+old.num <- num
+num <- 20
+print(twod_scatterplot(num, old.num));
+```
+
+---
+
+## Two variables
+
+```{r scatterplot.test.2, cache=FALSE, fig.width=7, fig.height=7}
+old.num <- num
+num <- num * 3
+print(twod_scatterplot(num, old.num));
+```
+
+---
+
+## Two variables
+
+```{r scatterplot.test.3, cache=FALSE, fig.width=7, fig.height=7}
+old.num <- num
+num <- num * 3
+print(twod_scatterplot(num, old.num));
+```
+
+---
+
+## Two variables
+
+```{r scatterplot.test.4, cache=FALSE, fig.width=7, fig.height=7}
+old.num <- num
+num <- num * 3
+print(twod_scatterplot(num, old.num));
+```
+
+Show a two-variable scatterplot.  Emphasize: the way we want to interact with this is by **taking draws**.
+
+Also, make this an animated gif.
+
+---
+
+## ...Infinity!
+
+Show a bunch of random function draws.  Make them non-trivial, but with noticeable variation.  Hey, maybe just specify a non-trivial mean function.
+
+---
+
+## Covariance is Key
+
+Animate a 2-d scatterplot as we slide between near and far points.
 
 ---
 
@@ -55,11 +144,22 @@ So, first question: how uncertain _are_ we?  You see we'll need a sensible way t
 
 Gaussian process machinery:
   - There's some function you wish you knew.
-  - Give the machinery some arbitrary number of points where you know the function (it's fine if they're noisy).
+  - Give the machinery some arbitrary number of points where you know the
+    function (it's fine if they're noisy).
   - Ask it for the values of the function at some other set of points
     - The key is: look at those values **simultaneously**.
 
 ---
 
+## Also worth mentioning
+
+Gaussian processes were used by the BEST collaboration (solved problems with
+time series, etc.)
+
+---
+
 # Reducing uncertainty
 
+---
+
+## 
