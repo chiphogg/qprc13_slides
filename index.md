@@ -31,6 +31,36 @@ to _quantify_ uncertainty in _continuous functions_.
 
 # Quantifying uncertainty
 
+Great narrative for great justice!
+
+1. What we wish we had
+  - _Individual_ random quantities (like rolls of a die) are easier to understand
+  - Show a bunch of random draws of functions.  ("WAT.")
+    - Here, the probabilities don't matter; what matters are the functions in the distribution.
+2. Simpler case: two random numbers.
+  - Show on scatterplot.
+    - Familiar, and great, visualization!  But it **doesn't scale**.
+3. Simpler case; alternative view
+  - Show side-by-side with scatterplot: random variables next to each other
+    - Connect them by lines... hmm!  Suggestive!!
+4. Lots of variables
+5. Return to scatterplot view
+  - nice animated gif
+
+Maybe then talk about GPs: use the simplest multivariate probability distribution.
+
+---
+
+## Probability example: rolling dice
+
+
+
+
+
+
+
+<img src="custom/dice.gif">
+
 ---
 
 ## Two variables
@@ -64,6 +94,8 @@ to _quantify_ uncertainty in _continuous functions_.
 
 
 Show a two-variable scatterplot.  Emphasize: the way we want to interact with this is by **taking draws**.
+
+Also, make this an animated gif and just one slide.
 
 ---
 

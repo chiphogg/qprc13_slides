@@ -69,6 +69,46 @@ Great narrative for great justice!
   - nice animated gif
 
 Maybe then talk about GPs: use the simplest multivariate probability distribution.
+
+---
+
+## Probability example: rolling dice
+
+```{r dice.plot.function, cache=FALSE}
+dice_plot <- function(n, rolls) {
+  set.seed(1)
+  d <- data.frame(
+    x=round(runif(n=n, min=0.5, max=6.5))
+    + round(runif(n=n, min=0.5, max=6.5)))
+  p <- (ggplot(data=d, aes(x=x))
+    + geom_histogram(binwidth=1, colour='white', origin=0.5)
+    + scale_x_continuous("Total", limits=c(1, 13),
+      breaks=seq(from=2, to=12, by=2))
+    + scale_y_continuous("", breaks=rolls)
+    + ggtitle(sprintf("Rolling 2 dice %d times", n))
+    )
+  return (p)
+}
+```
+
+```{r make.gif, cache=FALSE, include=FALSE}
+set.seed(5)
+# Make the animation
+library(animation)
+saveGIF({
+  rolls <- as.vector(outer(c(2, 5, 10), 10^(0:3)))
+  rolls <- c(rolls, rep(tail(rolls, n=1), 4))
+  for (i in rolls) {
+    print(dice_plot(i, rolls))
+  }
+}, movie.name='dice.gif',
+outdir=paste(getwd(), 'custom', sep='/'),
+clean=TRUE, interval=2, ani.dev='CairoPNG',
+ani.width=150 * 7.0, ani.height=150 * 3.5)
+```
+
+<img src="custom/dice.gif">
+
 ---
 
 ## Two variables
@@ -137,7 +177,7 @@ print(twod_scatterplot(num, old.num));
 
 Show a two-variable scatterplot.  Emphasize: the way we want to interact with this is by **taking draws**.
 
-Also, make this an animated gif.
+Also, make this an animated gif and just one slide.
 
 ---
 
