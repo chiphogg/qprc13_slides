@@ -29,7 +29,7 @@ to _quantify_ uncertainty in _continuous functions_.
 
 ---
 
-# Quantifying uncertainty
+# Probabilities for functions
 
 Great narrative for great justice!
 
@@ -69,33 +69,9 @@ Maybe then talk about GPs: use the simplest multivariate probability distributio
 
 
 
-![plot of chunk scatterplot.test.1](figure/scatterplot.test.1.png) 
 
 
----
-
-## Two variables
-
-![plot of chunk scatterplot.test.2](figure/scatterplot.test.2.png) 
-
-
----
-
-## Two variables
-
-![plot of chunk scatterplot.test.3](figure/scatterplot.test.3.png) 
-
-
----
-
-## Two variables
-
-![plot of chunk scatterplot.test.4](figure/scatterplot.test.4.png) 
-
-
-Show a two-variable scatterplot.  Emphasize: the way we want to interact with this is by **taking draws**.
-
-Also, make this an animated gif and just one slide.
+<img src="custom/2d_scatterplot.gif">
 
 ---
 
@@ -133,8 +109,36 @@ time series, etc.)
 
 ---
 
-# Reducing uncertainty
+# Steel strain results
 
 ---
 
-## 
+# Implications for the experiment
+
+---
+
+## Rutherford's criticism
+
+(pic of Rutherford)
+
+"If your experiment needs statistics, you ought to have done a better experiment."
+
+Response: "Better statistics can lead you to that better experiment"
+
+(Show as memes?  Pic of Bayes...)
+
+---
+
+## Gap width: ripe for tuning
+
+<object data="./inkscape/beam_1_straight.svg" type="image/svg+xml"></object>
+
+---
+
+## Gap width: ripe for tuning
+
+<object data="inkscape/beam_2_tilted.svg" type="image/svg+xml"></object>
+
+---
+
+# Conclusions
