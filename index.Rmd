@@ -195,9 +195,63 @@ time series, etc.)
 
 # Steel strain results
 
+
+```{r include=FALSE}
+load("custom/trained.RO")
+x.gap.surface <- GriddedConvexHull(X=d.gap$X, spacing=0.2)
+post.gap <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=1)
+post.gap.wide <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=3)
+M.aniso$SetNoiseBounds(sigma.vals=2e-6)
+L.strain <- M.aniso$L(d=d.strain, X.out=x.gap.surface)
+```
+
+```{r strain-datapoints, webgl=TRUE, fig.height=4}
+d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
+```
+What do I actually want to show?
+
+  1. mean surface
+  2. +- 1 sigma: show low uncertainty
+  3. +- 1 sigma with actual datapoints
+  4. +- 2 (or 3) sigma: no outliers?
+
+Alternative slide: animations?  Only if I have time.
+
 ---
 
-# Implications for the experiment
+## Steel strain results: mean surface
+
+```{r fig.height=7, webgl=TRUE}
+d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
+PlotSurface(X=x.gap.surface, Y=post.gap$mean)
+```
+
+---
+
+## Steel strain results: with 1-sigma uncertainty
+
+```{r fig.height=7, webgl=TRUE}
+d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
+PlotSurface(X=x.gap.surface, Y=post.gap$mean)
+PlotSurface(X=x.gap.surface, Y=post.gap$upper, color='blue', alpha=0.3)
+PlotSurface(X=x.gap.surface, Y=post.gap$lower, color='red', alpha=0.3)
+```
+
+---
+
+## Steel strain results: true datapoints
+
+```{r fig.height=7, webgl=TRUE}
+d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
+PlotSurface(X=x.gap.surface, Y=post.gap$mean)
+PlotSurface(X=x.gap.surface, Y=post.gap$upper, color='blue', alpha=0.6)
+PlotSurface(X=x.gap.surface, Y=post.gap$lower, color='red', alpha=0.6)
+d.gap$Plot2D(dist.factor=0.15, max.points=Inf, clear=FALSE, col="grey")
+```
+
+---
+
+# Feedback to the experiment
 
 ---
 

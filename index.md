@@ -111,9 +111,52 @@ time series, etc.)
 
 # Steel strain results
 
+
+
+
+
+<iframe src="rgl_strain-datapoints.html" width="936" height="288"></iframe>
+
+What do I actually want to show?
+
+  1. mean surface
+  2. +- 1 sigma: show low uncertainty
+  3. +- 1 sigma with actual datapoints
+  4. +- 2 (or 3) sigma: no outliers?
+
+Alternative slide: animations?  Only if I have time.
+
 ---
 
-# Implications for the experiment
+## Steel strain results: mean surface
+
+<iframe src="rgl_unnamed-chunk-2.html" width="936" height="504"></iframe>
+
+
+---
+
+## Steel strain results: with 1-sigma uncertainty
+
+<iframe src="rgl_unnamed-chunk-3.html" width="936" height="504"></iframe>
+
+
+---
+
+## Steel strain results: true datapoints
+
+<iframe src="rgl_unnamed-chunk-4.html" width="936" height="504"></iframe>
+
+
+---
+
+## Steel strain results: 3-sigma
+
+<iframe src="rgl_unnamed-chunk-5.html" width="936" height="504"></iframe>
+
+
+---
+
+# Feedback to the experiment
 
 ---
 
