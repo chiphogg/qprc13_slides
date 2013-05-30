@@ -1,4 +1,5 @@
 #!/bin/bash
 
+R-2.15 --slave -e 'source("./run_me_once.R")'
 R-2.15 --slave -e 'library(slidify); slidify("index.Rmd")'
 

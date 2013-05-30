@@ -1,5 +1,9 @@
 assets
 cache
+CanvasMatrix.js
 custom
 figure
 libraries
+.*
+rgl*.html
+*.png
