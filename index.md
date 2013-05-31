@@ -149,14 +149,22 @@ Alternative slide: animations?  Only if I have time.
 
 ---
 
-## Steel strain results: 3-sigma
+# Feedback to the experiment
 
-<iframe src="rgl_unnamed-chunk-5.html" width="936" height="504"></iframe>
+
+
+
+
 
 
 ---
 
-# Feedback to the experiment
+## Uncertainty vs. gap size
+
+
+
+
+<img src="custom/uncertainty.gif">
 
 ---
 

@@ -253,6 +253,63 @@ d.gap$Plot2D(dist.factor=0.15, max.points=Inf, clear=FALSE, col="grey")
 
 # Feedback to the experiment
 
+```{r common-parameters, include=FALSE, cache=FALSE}
+diameter_to_show <- 8
+display_range <- diameter_to_show * c(-1, 1) * 0.5
+data_size <- 1.5            # size of datapoints
+gap_size <- 3 * data_size   # size of gap points
+gap_border_size <- gap_size * 1.3
+data(steelStrain)
+h <- diff(range(c(steelStrain$exx, steelStrainGap$exx)))
+```
+
+```{r gap.size.analysis.functions, include=FALSE, cache=FALSE}
+load('./custom/results.RO')
+PlotUncertainty <- function(results, gap.size) {
+  p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
+    + geom_point(size=data_size)
+    + geom_point(data=results[[gap.size]]$predicted, size=gap_border_size,
+      aes(x=X.X, y=X.Y), colour='black')
+    + geom_point(data=results[[gap.size]]$predicted, size=gap_size,
+      aes(x=X.X, y=X.Y, colour=(upper-mean)))
+    + scale_x_continuous("", limits=display_range)
+    + scale_y_continuous("", limits=display_range)
+    + scale_colour_gradientn(limits=0.2 * h * c(1e-5, 1),
+      trans='log',
+      colours=c("green", "yellow", "red"))
+    + coord_fixed(ratio=1)
+    )
+  return (p)
+}
+```
+
+---
+
+## Uncertainty vs. gap size
+
+```{r gap.size.plots, include=FALSE, cache=FALSE}
+AnimSeq <- function(from, to, step, delay) {
+  s <- seq(from=from, to=to, by=step)
+  d <- delay - 1
+  return (c(rep(from, d), s, rep(to, d), rev(s)))
+}
+
+set.seed(1)
+library(animation)
+saveGIF({
+  old.num <- 0
+  num <- 20
+  for (i in AnimSeq(6, 3, -0.5, 5)) {
+    print(PlotUncertainty(results, sprintf("%.1f", i)))
+  }
+}, movie.name='uncertainty.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=0.4, ani.dev='CairoPNG',
+ani.width=150 * 4.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/uncertainty.gif">
+
 ---
 
 ## Rutherford's criticism
