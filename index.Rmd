@@ -261,10 +261,19 @@ gap_size <- 3 * data_size   # size of gap points
 gap_border_size <- gap_size * 1.3
 data(steelStrain)
 h <- diff(range(c(steelStrain$exx, steelStrainGap$exx)))
+
+AnimSeq <- function(from, to, step, delay) {
+  s <- seq(from=from, to=to, by=step)
+  d <- delay - 1
+  return (c(rep(from, d), s, rep(to, d), rev(s)))
+}
+animation_keys <- AnimSeq(6, 3, -0.5, 5)
 ```
 
 ```{r gap.size.analysis.functions, include=FALSE, cache=FALSE}
 load('./custom/results.RO')
+
+# Plot the uncertainty in the predicted gap strain points.
 PlotUncertainty <- function(results, gap.size) {
   p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
     + geom_point(size=data_size)
@@ -281,25 +290,53 @@ PlotUncertainty <- function(results, gap.size) {
     )
   return (p)
 }
+
+# Plot the difference between the true gap strain and the predicted values.
+PlotError <- function(results, gap.size) {
+  results[[gap.size]]$predicted$error <- (
+    results[[gap.size]]$predicted$mean - results[[gap.size]]$gap$dpts)
+  p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
+    + geom_point(size=data_size)
+    + geom_point(data=results[[gap.size]]$predicted, size=gap_border_size,
+      aes(x=X.X, y=X.Y), colour='black')
+    + geom_point(data=results[[gap.size]]$predicted, size=gap_size,
+      aes(x=X.X, y=X.Y, colour=error))
+    + scale_x_continuous("", limits=display_range)
+    + scale_y_continuous("", limits=display_range)
+    + scale_colour_gradient2("Error", limits=1.4e-3 * c(-1, 1), breaks=c(-0.001, 0, 0.001))
+    + coord_fixed(ratio=1)
+    )
+  return (p)
+}
+
+# Plot the ratio between the error and the uncertainty.
+PlotNormalizedError <- function(results, gap.size) {
+  results[[gap.size]]$predicted$error <- (
+    results[[gap.size]]$predicted$mean - results[[gap.size]]$gap$dpts)
+  p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
+    + geom_point(size=data_size)
+    + geom_point(data=results[[gap.size]]$predicted, size=gap_border_size,
+      aes(x=X.X, y=X.Y), colour='black')
+    + geom_point(data=results[[gap.size]]$predicted, size=gap_size,
+      aes(x=X.X, y=X.Y, colour=error / (upper - mean)))
+    + scale_x_continuous("", limits=display_range)
+    + scale_y_continuous("", limits=display_range)
+    + scale_colour_gradient2("Error", limits=3 * c(-1, 1), breaks=c(-3, -1, 1, 3))
+    + coord_fixed(ratio=1)
+    )
+  return (p)
+}
 ```
 
 ---
 
 ## Uncertainty vs. gap size
 
-```{r gap.size.plots, include=FALSE, cache=FALSE}
-AnimSeq <- function(from, to, step, delay) {
-  s <- seq(from=from, to=to, by=step)
-  d <- delay - 1
-  return (c(rep(from, d), s, rep(to, d), rev(s)))
-}
-
+```{r gap.size.uncertainty, include=FALSE, cache=FALSE}
 set.seed(1)
 library(animation)
 saveGIF({
-  old.num <- 0
-  num <- 20
-  for (i in AnimSeq(6, 3, -0.5, 5)) {
+  for (i in animation_keys) {
     print(PlotUncertainty(results, sprintf("%.1f", i)))
   }
 }, movie.name='uncertainty.gif',
@@ -309,6 +346,44 @@ ani.width=150 * 4.5, ani.height=150 * 3.5)
 ```
 
 <img src="custom/uncertainty.gif">
+
+---
+
+## Error vs. gap size
+
+```{r gap.size.error, include=FALSE, cache=FALSE}
+set.seed(1)
+library(animation)
+saveGIF({
+  for (i in animation_keys) {
+    print(PlotError(results, sprintf("%.1f", i)))
+  }
+}, movie.name='error.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=0.4, ani.dev='CairoPNG',
+ani.width=150 * 4.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/error.gif">
+
+---
+
+## Normalized error vs. gap size
+
+```{r gap.size.normalized.error, include=FALSE, cache=FALSE}
+set.seed(1)
+library(animation)
+saveGIF({
+  for (i in animation_keys) {
+    print(PlotNormalizedError(results, sprintf("%.1f", i)))
+  }
+}, movie.name='normalized_error.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=0.4, ani.dev='CairoPNG',
+ani.width=150 * 4.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/normalized_error.gif">
 
 ---
 

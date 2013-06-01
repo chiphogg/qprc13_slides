@@ -115,7 +115,7 @@ time series, etc.)
 
 
 
-<iframe src="rgl_strain-datapoints.html" width="936" height="288"></iframe>
+<iframe src="rgl_strain-datapoints.html" width="936" height="504"></iframe>
 
 What do I actually want to show?
 
@@ -165,6 +165,24 @@ Alternative slide: animations?  Only if I have time.
 
 
 <img src="custom/uncertainty.gif">
+
+---
+
+## Error vs. gap size
+
+
+
+
+<img src="custom/error.gif">
+
+---
+
+## Normalized error vs. gap size
+
+
+
+
+<img src="custom/normalized_error.gif">
 
 ---
 
