@@ -119,6 +119,56 @@ ani.width=150 * 7.0, ani.height=150 * 3.5)
 
 ---
 
+## Random functions (?)
+
+```{r random.function.function, cache=FALSE, include=FALSE}
+PlotRandomFunctions <- function(i, n) {
+  # Generate n random functions, and plot the first i of them, highlighting the
+  # i'th one.
+  set.seed(2)
+  require(gppois)
+  require(ggplot2)
+  N <- 200
+  X <- seq(from=0, to=6, length.out=N)
+  Cov <- CovarianceSE(ell=1, sigma.f=1)
+  K <- Cov$K.specific(X=X) + 1e-8 * diag(N)
+  L <- t(chol(K))
+  seeds <- matrix(rnorm(n=N*n), nrow=N)
+  d_master <- data.frame(y=as.vector(L %*% seeds), x=X, i=rep(1:n, each=N))
+  d_old <- d_master[which(d_master$i < i), ]
+  d_new <- d_master[which(d_master$i == i), ]
+  old.size <- 1.2
+  new.size <- old.size * 1.5
+  p <- (ggplot(data=d_old)
+    + geom_line(data=d_master, aes(y=y, x=x, group=i), size=old.size*0.5, colour='grey70')
+    + geom_line(aes(y=y, x=x, group=i), size=old.size, colour='grey50')
+    + geom_line(data=d_new, aes(y=y, x=x), size=new.size, colour='red')
+    + scale_y_continuous("", limits=3*c(-1, 1))
+    + ggtitle(sprintf("%d of %d", i, n))
+    )
+  return (p)
+}
+```
+
+```{r random.function.animation, cache=FALSE, include=FALSE}
+set.seed(1)
+library(animation)
+library(gridExtra)
+saveGIF({
+  n <- 11
+  for (i in 1:n) {
+    grid.arrange(PlotRandomFunctions(i, n), PlotRandomFunctions(n, n), ncol=2)
+  }
+}, movie.name='random_functions.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=2, ani.dev='CairoPNG',
+ani.width=150 * 3.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/random_functions.gif">
+
+---
+
 ## Two variables
 
 ```{r scatterplot.function, cache=FALSE}

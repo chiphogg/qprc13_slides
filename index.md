@@ -53,6 +53,9 @@ Maybe then talk about GPs: use the simplest multivariate probability distributio
 
 ## Probability example: rolling dice
 
+TODO: plot this in a way which suggests individual draws.  Maybe scatterplot?
+vertical axis: 2 through 12.  Horizontal axis: index.
+
 
 
 
@@ -60,6 +63,18 @@ Maybe then talk about GPs: use the simplest multivariate probability distributio
 
 
 <img src="custom/dice.gif">
+
+---
+
+## Random functions (?)
+
+
+
+
+
+
+
+<img src="custom/random_functions.gif">
 
 ---
 
@@ -130,21 +145,21 @@ Alternative slide: animations?  Only if I have time.
 
 ## Steel strain results: mean surface
 
-<iframe src="rgl_unnamed-chunk-2.html" width="936" height="504"></iframe>
+<iframe src="rgl_unnamed-chunk-1.html" width="936" height="504"></iframe>
 
 
 ---
 
 ## Steel strain results: with 1-sigma uncertainty
 
-<iframe src="rgl_unnamed-chunk-3.html" width="936" height="504"></iframe>
+<iframe src="rgl_unnamed-chunk-2.html" width="936" height="504"></iframe>
 
 
 ---
 
 ## Steel strain results: true datapoints
 
-<iframe src="rgl_unnamed-chunk-4.html" width="936" height="504"></iframe>
+<iframe src="rgl_unnamed-chunk-3.html" width="936" height="504"></iframe>
 
 
 ---
@@ -156,6 +171,18 @@ Alternative slide: animations?  Only if I have time.
 
 
 
+
+---
+
+## Gap width: ripe for tuning
+
+<object data="./inkscape/beam_1_straight.svg" type="image/svg+xml"></object>
+
+---
+
+## Gap width: ripe for tuning
+
+<object data="inkscape/beam_2_tilted.svg" type="image/svg+xml"></object>
 
 ---
 
@@ -195,18 +222,6 @@ Alternative slide: animations?  Only if I have time.
 Response: "Better statistics can lead you to that better experiment"
 
 (Show as memes?  Pic of Bayes...)
-
----
-
-## Gap width: ripe for tuning
-
-<object data="./inkscape/beam_1_straight.svg" type="image/svg+xml"></object>
-
----
-
-## Gap width: ripe for tuning
-
-<object data="inkscape/beam_2_tilted.svg" type="image/svg+xml"></object>
 
 ---
 
