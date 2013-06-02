@@ -75,12 +75,19 @@ Maybe then talk about GPs: use the simplest multivariate probability distributio
 
 ## Probability example: rolling dice
 
-```{r dice.plot.function}
+TODO: plot this in a way which suggests individual draws.  Maybe scatterplot?
+vertical axis: 2 through 12.  Horizontal axis: index.
+
+```{r dice.plot.function, cache=FALSE}
+global_dice_rolls <<- c()
 dice_plot <- function(n, rolls) {
   set.seed(1)
-  d <- data.frame(
-    x=round(runif(n=n, min=0.5, max=6.5))
-    + round(runif(n=n, min=0.5, max=6.5)))
+  n.prime <- n - length(global_dice_rolls)
+  if (n.prime < 0) return (NULL)
+  global_dice_rolls <<- c(global_dice_rolls,
+    round(runif(n=n.prime, min=0.5, max=6.5))
+    + round(runif(n=n.prime, min=0.5, max=6.5)))
+  d <- data.frame(x=global_dice_rolls)
   p <- (ggplot(data=d, aes(x=x))
     + geom_histogram(binwidth=1, colour='white', origin=0.5)
     + scale_x_continuous("Total", limits=c(1, 13),
@@ -92,7 +99,7 @@ dice_plot <- function(n, rolls) {
 }
 ```
 
-```{r make.gif, include=FALSE}
+```{r make.gif, cache=FALSE, include=FALSE}
 set.seed(5)
 # Make the animation
 library(animation)
@@ -104,7 +111,7 @@ saveGIF({
   }
 }, movie.name='dice.gif',
 outdir=gif.output.directory,
-clean=TRUE, interval=2, ani.dev='CairoPNG',
+clean=TRUE, interval=1.2, ani.dev='CairoPNG',
 ani.width=150 * 7.0, ani.height=150 * 3.5)
 ```
 
@@ -196,7 +203,7 @@ time series, etc.)
 # Steel strain results
 
 
-```{r include=FALSE}
+```{r steel-strain-vars, include=FALSE}
 load("custom/trained.RO")
 x.gap.surface <- GriddedConvexHull(X=d.gap$X, spacing=0.2)
 post.gap <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=1)
