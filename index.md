@@ -195,6 +195,15 @@ Alternative slide: animations?  Only if I have time.
 
 ---
 
+## Uncertainty vs. gap size: cumulative statistics
+
+
+
+
+<img src="custom/uncertainty2.gif">
+
+---
+
 ## Error vs. gap size
 
 

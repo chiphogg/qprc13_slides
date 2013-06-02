@@ -78,7 +78,7 @@ Maybe then talk about GPs: use the simplest multivariate probability distributio
 TODO: plot this in a way which suggests individual draws.  Maybe scatterplot?
 vertical axis: 2 through 12.  Horizontal axis: index.
 
-```{r dice.plot.function, cache=FALSE}
+```{r dice.plot.function}
 global_dice_rolls <<- c()
 dice_plot <- function(n, rolls) {
   set.seed(1)
@@ -99,7 +99,7 @@ dice_plot <- function(n, rolls) {
 }
 ```
 
-```{r make.gif, cache=FALSE, include=FALSE}
+```{r make.gif, include=FALSE}
 set.seed(5)
 # Make the animation
 library(animation)
@@ -121,7 +121,7 @@ ani.width=150 * 7.0, ani.height=150 * 3.5)
 
 ## Random functions (?)
 
-```{r random.function.function, cache=FALSE, include=FALSE}
+```{r random.function.function, include=FALSE}
 PlotRandomFunctions <- function(i, n) {
   # Generate n random functions, and plot the first i of them, highlighting the
   # i'th one.
@@ -150,7 +150,7 @@ PlotRandomFunctions <- function(i, n) {
 }
 ```
 
-```{r random.function.animation, cache=FALSE, include=FALSE}
+```{r random.function.animation, include=FALSE}
 set.seed(1)
 library(animation)
 library(gridExtra)
@@ -171,7 +171,7 @@ ani.width=150 * 3.5, ani.height=150 * 3.5)
 
 ## Two variables
 
-```{r scatterplot.function, cache=FALSE}
+```{r scatterplot.function}
 twod_scatterplot <- function(n, old=0) {
   # A 2d scatterplot of draws from a bivariate normal.
   #
@@ -195,7 +195,7 @@ twod_scatterplot <- function(n, old=0) {
 }
 ```
 
-```{r make.scatterplot.gif, cache=FALSE, include=FALSE}
+```{r make.scatterplot.gif, include=FALSE}
 set.seed(1)
 library(animation)
 saveGIF({
@@ -330,8 +330,8 @@ animation_keys <- AnimSeq(6, 3, -0.5, 5)
 ```{r gap.size.analysis.functions, include=FALSE, cache=FALSE}
 load('./custom/results.RO')
 
-# Plot the uncertainty in the predicted gap strain points.
 PlotUncertainty <- function(results, gap.size) {
+  # Plot the uncertainty in the predicted gap strain points.
   p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
     + geom_point(size=data_size)
     + geom_point(data=results[[gap.size]]$predicted, size=gap_border_size,
@@ -348,8 +348,47 @@ PlotUncertainty <- function(results, gap.size) {
   return (p)
 }
 
-# Plot the difference between the true gap strain and the predicted values.
+PlotAggregateUncertainty <- function(results, gap.size) {
+  # Plot summary statistics (max, median, mean) for the uncertainty at each gap
+  # size, highlighting one gap size above the rest.
+  N <- length(results)
+
+  # Compute mean, median, and max uncertainty for each gap size.
+  unc_max <- c()
+  unc_median <- c()
+  unc_mean <- c()
+  for (gap in names(results)) {
+    unc_max <- c(unc_max, max(
+        results[[gap]]$predicted$upper - results[[gap]]$predicted$mean))
+    unc_mean <- c(unc_mean, mean(
+        results[[gap]]$predicted$upper - results[[gap]]$predicted$mean))
+    unc_median <- c(unc_median, median(
+        results[[gap]]$predicted$upper - results[[gap]]$predicted$mean))
+  }
+
+  # Construct data frame suitable for plotting.
+  d_wide <- data.frame(gap=names(results),
+    mean=unc_mean, max=unc_max, median=unc_median)
+  require(reshape2)
+  d <- melt(d_wide, id.vars="gap")
+  d$highlight <- 'no'
+  d$highlight[which(d$gap == gap.size)] <- 'yes'
+
+  # Construct and return the plot.
+  point_size <- 2
+  require(ggplot2)
+  p <- (ggplot(data=d, aes(x=as.numeric(gap), y=value))
+    + geom_line(aes(colour=variable))
+    + geom_point(aes(size=highlight), legend=FALSE)
+    + scale_size_manual(values=c(no=point_size, yes=2 * point_size))
+    + scale_x_continuous("Gap (mm)")
+    + scale_y_log10()
+    )
+  return (p)
+}
+
 PlotError <- function(results, gap.size) {
+  # Plot the difference between the true gap strain and the predicted values.
   results[[gap.size]]$predicted$error <- (
     results[[gap.size]]$predicted$mean - results[[gap.size]]$gap$dpts)
   p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
@@ -366,8 +405,8 @@ PlotError <- function(results, gap.size) {
   return (p)
 }
 
-# Plot the ratio between the error and the uncertainty.
 PlotNormalizedError <- function(results, gap.size) {
+  # Plot the ratio between the error and the uncertainty.
   results[[gap.size]]$predicted$error <- (
     results[[gap.size]]$predicted$mean - results[[gap.size]]$gap$dpts)
   p <- (ggplot(data=as.data.frame(results[[gap.size]]$data$X), aes(x=X, y=Y))
@@ -411,10 +450,34 @@ saveGIF({
 }, movie.name='uncertainty.gif',
 outdir=gif.output.directory,
 clean=TRUE, interval=0.4, ani.dev='CairoPNG',
-ani.width=150 * 4.5, ani.height=150 * 3.5)
+ani.width=150 * 4.0, ani.height=150 * 3.5)
 ```
 
 <img src="custom/uncertainty.gif">
+
+---
+
+## Uncertainty vs. gap size: cumulative statistics
+
+```{r gap.size.uncertainty2, include=FALSE, cache=FALSE}
+set.seed(1)
+library(animation)
+require(gridExtra)
+saveGIF({
+  for (i in animation_keys) {
+    grid.arrange(ncol=2
+      #, widths=c(4.0, 3.5)
+      , PlotUncertainty(results, sprintf("%.1f", i))
+      , PlotAggregateUncertainty(results, sprintf("%.1f", i))
+      )
+  }
+}, movie.name='uncertainty2.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=0.4, ani.dev='CairoPNG',
+ani.width=150 * 7.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/uncertainty2.gif">
 
 ---
 
@@ -430,7 +493,7 @@ saveGIF({
 }, movie.name='error.gif',
 outdir=gif.output.directory,
 clean=TRUE, interval=0.4, ani.dev='CairoPNG',
-ani.width=150 * 4.5, ani.height=150 * 3.5)
+ani.width=150 * 4.0, ani.height=150 * 3.5)
 ```
 
 <img src="custom/error.gif">
@@ -449,7 +512,7 @@ saveGIF({
 }, movie.name='normalized_error.gif',
 outdir=gif.output.directory,
 clean=TRUE, interval=0.4, ani.dev='CairoPNG',
-ani.width=150 * 4.5, ani.height=150 * 3.5)
+ani.width=150 * 4.0, ani.height=150 * 3.5)
 ```
 
 <img src="custom/normalized_error.gif">
