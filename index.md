@@ -213,6 +213,15 @@ Alternative slide: animations?  Only if I have time.
 
 ---
 
+## Error vs. gap size: cumulative statistics
+
+
+
+
+<img src="custom/error2.gif">
+
+---
+
 ## Normalized error vs. gap size
 
 
