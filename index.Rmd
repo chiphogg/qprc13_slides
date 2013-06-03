@@ -101,9 +101,9 @@ dice_plot <- function(n, rolls) {
 
 ```{r make.gif, include=FALSE}
 set.seed(5)
-# Make the animation
 library(animation)
 saveGIF({
+  # Make the animation
   rolls <- as.vector(outer(c(2, 5, 10), 10^(0:3)))
   rolls <- c(rolls, rep(tail(rolls, n=1), 4))
   for (i in rolls) {
@@ -313,11 +313,16 @@ d.gap$Plot2D(dist.factor=0.15, max.points=Inf, clear=FALSE, col="grey")
 ```{r common-parameters, include=FALSE, cache=FALSE}
 diameter_to_show <- 8
 display_range <- diameter_to_show * c(-1, 1) * 0.5
-data_size <- 1.5            # size of datapoints
+data_size <- 3              # size of datapoints
 gap_size <- 3 * data_size   # size of gap points
 gap_border_size <- gap_size * 1.3
 data(steelStrain)
 h <- diff(range(c(steelStrain$exx, steelStrainGap$exx)))
+
+uncertainty_log_breaks <- -c(7, 5, 3)
+uncertainty_log_labels <- eval(parse(text=paste(sep='', "expression("
+      , paste("10^", -c(7, 5, 3), collapse=", ", sep='')
+      , ")")))
 
 AnimSeq <- function(from, to, step, delay) {
   s <- seq(from=from, to=to, by=step)
@@ -340,10 +345,15 @@ PlotUncertainty <- function(results, gap.size) {
       aes(x=X.X, y=X.Y, colour=(upper-mean)))
     + scale_x_continuous("", limits=display_range)
     + scale_y_continuous("", limits=display_range)
-    + scale_colour_gradientn(limits=0.2 * h * c(1e-5, 1),
-      trans='log',
-      colours=c("green", "yellow", "red"))
+    + scale_colour_gradientn(expression(sigma)
+      , limits=0.2 * h * c(1e-5, 1)
+      , trans='log'
+      , colours=c("green", "yellow", "red")
+      , breaks=10^(uncertainty_log_breaks)
+      , labels=uncertainty_log_labels
+      )
     + coord_fixed(ratio=1)
+    + ggtitle(expression(paste("Uncertainty (1-", sigma, ")")))
     )
   return (p)
 }
@@ -368,7 +378,7 @@ PlotAggregateUncertainty <- function(results, gap.size) {
 
   # Construct data frame suitable for plotting.
   d_wide <- data.frame(gap=names(results),
-    mean=unc_mean, max=unc_max, median=unc_median)
+    max=unc_max, mean=unc_mean, median=unc_median)
   require(reshape2)
   d <- melt(d_wide, id.vars="gap")
   d$highlight <- 'no'
@@ -377,12 +387,17 @@ PlotAggregateUncertainty <- function(results, gap.size) {
   # Construct and return the plot.
   point_size <- 2
   require(ggplot2)
-  p <- (ggplot(data=d, aes(x=as.numeric(gap), y=value))
+  p <- (ggplot(data=d, aes(x=as.numeric(as.character(gap)), y=value))
     + geom_line(aes(colour=variable))
-    + geom_point(aes(size=highlight), legend=FALSE)
+    + geom_point(aes(size=highlight), show_guide=FALSE)
     + scale_size_manual(values=c(no=point_size, yes=2 * point_size))
-    + scale_x_continuous("Gap (mm)")
-    + scale_y_log10()
+    + scale_x_continuous("Gap (mm)", breaks=3:6, labels=3:6)
+    + scale_y_log10(""
+      , breaks=10^(uncertainty_log_breaks)
+      , labels=uncertainty_log_labels
+      )
+    + scale_colour_brewer("", palette="Set1")
+    + ggtitle("Summary")
     )
   return (p)
 }
@@ -440,11 +455,11 @@ PlotNormalizedError <- function(results, gap.size) {
 
 ## Uncertainty vs. gap size
 
-```{r gap.size.uncertainty, include=FALSE}
+```{r gap.size.uncertainty, include=FALSE, cache=FALSE}
 set.seed(1)
 library(animation)
 saveGIF({
-  for (i in animation_keys) {
+  for (i in c(animation_keys, animation_keys[1])) {
     print(PlotUncertainty(results, sprintf("%.1f", i)))
   }
 }, movie.name='uncertainty.gif',
@@ -464,9 +479,9 @@ set.seed(1)
 library(animation)
 require(gridExtra)
 saveGIF({
-  for (i in animation_keys) {
+  for (i in c(animation_keys, animation_keys[1])) {
     grid.arrange(ncol=2
-      #, widths=c(4.0, 3.5)
+      , widths=c(4.0, 3.0)
       , PlotUncertainty(results, sprintf("%.1f", i))
       , PlotAggregateUncertainty(results, sprintf("%.1f", i))
       )
@@ -474,7 +489,7 @@ saveGIF({
 }, movie.name='uncertainty2.gif',
 outdir=gif.output.directory,
 clean=TRUE, interval=0.4, ani.dev='CairoPNG',
-ani.width=150 * 7.5, ani.height=150 * 3.5)
+ani.width=150 * 7.0, ani.height=150 * 3.5)
 ```
 
 <img src="custom/uncertainty2.gif">
