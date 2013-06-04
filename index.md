@@ -90,6 +90,18 @@ vertical axis: 2 through 12.  Horizontal axis: index.
 
 ---
 
+## Two variables: alternative view
+
+
+
+
+
+
+
+<img src="custom/2_vars_side_by_side.gif">
+
+---
+
 ## ...Infinity!
 
 Show a bunch of random function draws.  Make them non-trivial, but with noticeable variation.  Hey, maybe just specify a non-trivial mean function.
