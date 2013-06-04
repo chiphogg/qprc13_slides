@@ -116,7 +116,13 @@ vertical axis: 2 through 12.  Horizontal axis: index.
 
 ## Covariance is Key
 
-Animate a 2-d scatterplot as we slide between near and far points.
+
+
+
+
+
+
+<img src="custom/slide_and_scatter.gif">
 
 ---
 

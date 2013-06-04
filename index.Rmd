@@ -246,7 +246,7 @@ twod_side_by_side <- function(n, old=0) {
 }
 ```
 
-```{r make.side.by.side.gif, include=FALSE, cache=FALSE}
+```{r make.side.by.side.gif, include=FALSE}
 set.seed(1)
 library(animation)
 saveGIF({
@@ -305,7 +305,7 @@ many_side_by_side <- function(k, n, i) {
 }
 ```
 
-```{r make.many.side.by.side.gif, include=FALSE, cache=FALSE}
+```{r make.many.side.by.side.gif, include=FALSE}
 set.seed(1)
 library(animation)
 saveGIF({
@@ -326,7 +326,85 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ## Covariance is Key
 
-Animate a 2-d scatterplot as we slide between near and far points.
+```{r slider.function, include=FALSE, cache=FALSE}
+SlidingVariables <- function(n_lines, n_points,
+  x=seq(from=0, to=6, length.out=200), i1=round(length(x) * 0.2), i2) {
+  # Plots n_lines "random functions", and a scatterplot (with n_points points)
+  # of function values at x1 and x2.
+  set.seed(2)
+  require(gppois)
+  require(ggplot2)
+  N <- length(x)
+  Cov <- CovarianceSE(ell=0.3 * diff(range(x)), sigma.f=1)
+  K <- Cov$K.specific(X=x) + 1e-8 * diag(N)
+  L <- t(chol(K))
+  seeds <- matrix(rnorm(n=N*n_lines), nrow=N)
+  d_lines <- data.frame(y=as.vector(L %*% seeds), x=x, i=rep(1:n_lines, each=N))
+  xi <- c(x[i1], x[i2])
+  d_vlines <- data.frame(x=xi)
+
+  # Scatterpoints sampled from the lines.
+  d_sampled_pts <- data.frame(i=1:n_lines
+    , x1=d_lines$y[which(d_lines$x == x[i1])]
+    , x2=d_lines$y[which(d_lines$x == x[i2])]
+    )
+  # Generate more scatterpoints with the same covariance.
+  i <- c(i1, i2)
+  K.sliced <- K[i, i]
+  L.sliced <- t(chol(K.sliced))
+  seeds.sliced <- matrix(rnorm(n=2 * n_points), nrow=2)
+  d_many_points <- data.frame(t(L.sliced %*% seeds.sliced))
+  point_base_size <- 1
+
+  common_options <- list(scale_colour_brewer("", palette="Set3")
+    , theme(legend.position='none')
+    )
+  p_lines <- (ggplot(data=d_lines)
+    + geom_line(aes(y=y, x=x, group=i, colour=as.factor(i)), size=2)
+    + geom_vline(data=d_vlines, aes(xintercept=x))
+    + scale_x_continuous("", breaks=d_vlines$x, labels=c('X1', 'X2'))
+    + scale_y_continuous("", limits=3*c(-1, 1))
+    + common_options
+    )
+  p_scatter <- (ggplot(data=d_many_points)
+    + geom_point(aes(x=X1, y=X2), size=point_base_size, colour='grey50')
+    + geom_point(data=d_sampled_pts
+      , aes(x=x1, y=x2, colour=as.factor(i))
+      , size=4.0 * point_base_size
+      )
+    + scale_x_continuous("X1", limits=3*c(-1, 1))
+    + scale_y_continuous("X2", limits=3*c(-1, 1))
+    + common_options
+    )
+  return (list(lines=p_lines, scatter=p_scatter))
+}
+```
+
+```{r slider.figure, include=FALSE, cache=FALSE}
+set.seed(1)
+library(animation)
+n_frames <- 50
+N <- 200  # Number of points.
+X <- seq(from=0, to=1, length.out=N)
+i_mid <- round(N / 2)
+di_min <- N * 0.05
+fraction <- sin(pi * seq(from=1 / n_frames, to=1, length.out=n_frames)) ^ 2
+di <- round(di_min + (N - i1 - di_min) * fraction)
+saveGIF({
+  for (i2 in i1 + di) {
+    sv <- SlidingVariables(n_lines=12, n_points=200, x=X, i1=i1, i2=i2)
+    grid.arrange(ncol=2
+      , sv$lines
+      , sv$scatter
+      )
+  }
+}, movie.name='slide_and_scatter.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=0.1, ani.dev='CairoPNG',
+ani.width=150 * 6.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/slide_and_scatter.gif">
 
 ---
 
@@ -653,7 +731,7 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ## Error vs. gap size
 
-```{r gap.size.error, include=FALSE, cache=FALSE}
+```{r gap.size.error, include=FALSE}
 set.seed(1)
 library(animation)
 saveGIF({
@@ -672,7 +750,7 @@ ani.width=150 * 3.5, ani.height=150 * 3.5)
 
 ## Error vs. gap size: cumulative statistics
 
-```{r gap.size.error2, include=FALSE, cache=FALSE}
+```{r gap.size.error2, include=FALSE}
 set.seed(1)
 library(animation)
 require(gridExtra)
