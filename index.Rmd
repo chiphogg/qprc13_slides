@@ -38,6 +38,19 @@ gif.output.directory <- paste(getwd(), 'custom', sep='/')
 
 # Overview
 
+```{r steel-strain-vars, include=FALSE}
+load("custom/trained.RO")
+x.gap.surface <- GriddedConvexHull(X=d.gap$X, spacing=0.2)
+post.gap <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=1)
+post.gap.wide <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=3)
+M.aniso$SetNoiseBounds(sigma.vals=2e-6)
+L.strain <- M.aniso$L(d=d.strain, X.out=x.gap.surface)
+```
+
+```{r strain-datapoints, webgl=TRUE, fig.height=7}
+d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
+```
+
 The basic story is this.
 
 We've got a metal plate, and we stretch it.  So there's some amount of strain at
@@ -437,19 +450,6 @@ time series, etc.)
 
 # Steel strain results
 
-
-```{r steel-strain-vars, include=FALSE}
-load("custom/trained.RO")
-x.gap.surface <- GriddedConvexHull(X=d.gap$X, spacing=0.2)
-post.gap <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=1)
-post.gap.wide <- M.aniso$PosteriorInterval(d=d.strain, X.out=x.gap.surface, num.sd=3)
-M.aniso$SetNoiseBounds(sigma.vals=2e-6)
-L.strain <- M.aniso$L(d=d.strain, X.out=x.gap.surface)
-```
-
-```{r strain-datapoints, webgl=TRUE, fig.height=7}
-d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
-```
 What do I actually want to show?
 
   1. mean surface
