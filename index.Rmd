@@ -349,11 +349,8 @@ SlidingVariables <- function(n_lines, n_points,
     , x2=d_lines$y[which(d_lines$x == x[i2])]
     )
   # Generate more scatterpoints with the same covariance.
-  i <- c(i1, i2)
-  K.sliced <- K[i, i]
-  L.sliced <- t(chol(K.sliced))
-  seeds.sliced <- matrix(rnorm(n=2 * n_points), nrow=2)
-  d_many_points <- data.frame(t(L.sliced %*% seeds.sliced))
+  seeds.many <- matrix(rnorm(n=N * n_points), nrow=N)
+  d_many_points <- data.frame(t(L %*% seeds.many)[, c(i1, i2)])
   point_base_size <- 1
 
   common_options <- list(scale_colour_brewer("", palette="Set3")
@@ -366,14 +363,19 @@ SlidingVariables <- function(n_lines, n_points,
     + scale_y_continuous("", limits=3*c(-1, 1))
     + common_options
     )
-  p_scatter <- (ggplot(data=d_many_points)
-    + geom_point(aes(x=X1, y=X2), size=point_base_size, colour='grey50')
+  p_scatter <- (ggplot(data=d_many_points, aes(x=x1, y=x2))
+    + geom_point(aes(x=X1, y=X2), size=point_base_size, colour='grey70')
     + geom_point(data=d_sampled_pts
-      , aes(x=x1, y=x2, colour=as.factor(i))
+      , colour='black'
+      , size=5.5 * point_base_size
+      )
+    + geom_point(data=d_sampled_pts
+      , aes(colour=as.factor(i))
       , size=4.0 * point_base_size
       )
     + scale_x_continuous("X1", limits=3*c(-1, 1))
     + scale_y_continuous("X2", limits=3*c(-1, 1))
+    + coord_fixed(ratio=1)
     + common_options
     )
   return (list(lines=p_lines, scatter=p_scatter))
@@ -386,13 +388,16 @@ library(animation)
 n_frames <- 50
 N <- 200  # Number of points.
 X <- seq(from=0, to=1, length.out=N)
-i_mid <- round(N / 2)
 di_min <- N * 0.05
-fraction <- sin(pi * seq(from=1 / n_frames, to=1, length.out=n_frames)) ^ 2
+offset <- floor(0.5 * di_min)
+distance <- ((0.5 * (N - di_min) - 1)
+  * sin(pi * seq(from=1 / n_frames, to=1, length.out=n_frames)) ^ 2)
+i_mid <- round(N / 2)
+i <- data.frame(i1=i_mid - offset - distance, i2=i_mid + offset + distance)
 di <- round(di_min + (N - i1 - di_min) * fraction)
 saveGIF({
-  for (i2 in i1 + di) {
-    sv <- SlidingVariables(n_lines=12, n_points=200, x=X, i1=i1, i2=i2)
+  for (a in 1:nrow(i)) {
+    sv <- SlidingVariables(n_lines=12, n_points=1000, x=X, i1=i$i1[a], i2=i$i2[a])
     grid.arrange(ncol=2
       , sv$lines
       , sv$scatter
