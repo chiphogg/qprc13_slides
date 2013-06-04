@@ -102,9 +102,15 @@ vertical axis: 2 through 12.  Horizontal axis: index.
 
 ---
 
-## ...Infinity!
+## Many variables
 
-Show a bunch of random function draws.  Make them non-trivial, but with noticeable variation.  Hey, maybe just specify a non-trivial mean function.
+
+
+
+
+
+
+<img src="custom/many_vars.gif">
 
 ---
 

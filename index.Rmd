@@ -277,9 +277,51 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ---
 
-## ...Infinity!
+## Many variables
 
-Show a bunch of random function draws.  Make them non-trivial, but with noticeable variation.  Hey, maybe just specify a non-trivial mean function.
+```{r many.side.by.side.function}
+many_side_by_side <- function(k, n, i) {
+  set.seed(2)
+  X <- 1:k
+  K <- 0.96 ^ abs(outer(X, X, "-"))
+  L <- t(chol(K))
+  x <- L %*% matrix(rnorm(n=k * n), nrow=k)
+  d <- data.frame(X=t(x))
+  d$id <- 1:nrow(d)
+  d$highlight = 'no'
+  d$highlight[which(d$id == i)] = 'yes'
+  require(reshape2)
+  d_melt <- melt(d[which(d$id <= i), ], id.vars=c('id', 'highlight'))
+  lim <- 3
+  p <- (ggplot(data=d_melt, aes(x=as.numeric(substring(variable, 3)), y=value, group=id, colour=highlight))
+    + geom_point(size=4)
+    + geom_line(size=1.5)
+    #+ scale_x_continuous("variable", breaks=1:k, labels=paste("X", 1:k, sep=''))
+    + scale_x_continuous("variable", breaks=c(1, k), labels=c('a', 'b'))
+    + scale_y_continuous("value", limits=c(-lim, lim))
+    + scale_colour_manual("", values=c(yes='red', no='grey50'))
+    + theme(legend.position='none')
+    )
+  return (p)
+}
+```
+
+```{r make.many.side.by.side.gif, include=FALSE, cache=FALSE}
+set.seed(1)
+library(animation)
+saveGIF({
+  k <- 15
+  n <- 10
+  for (i in 1:(n + 1)) {
+    print(many_side_by_side(k, n, i))
+  }
+}, movie.name='many_vars.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=4, ani.dev='CairoPNG',
+ani.width=150 * 6.5, ani.height=150 * 3.5)
+```
+
+<img src="custom/many_vars.gif">
 
 ---
 
