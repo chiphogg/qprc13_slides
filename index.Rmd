@@ -125,6 +125,7 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 PlotRandomFunctions <- function(i, n) {
   # Generate n random functions, and plot the first i of them, highlighting the
   # i'th one.
+  i <- min(i, n)
   set.seed(2)
   require(gppois)
   require(ggplot2)
@@ -140,11 +141,9 @@ PlotRandomFunctions <- function(i, n) {
   old.size <- 1.2
   new.size <- old.size * 1.5
   p <- (ggplot(data=d_old)
-    + geom_line(data=d_master, aes(y=y, x=x, group=i), size=old.size*0.5, colour='grey70')
     + geom_line(aes(y=y, x=x, group=i), size=old.size, colour='grey50')
     + geom_line(data=d_new, aes(y=y, x=x), size=new.size, colour='red')
     + scale_y_continuous("", limits=3*c(-1, 1))
-    + ggtitle(sprintf("%d of %d", i, n))
     )
   return (p)
 }
@@ -156,8 +155,8 @@ library(animation)
 library(gridExtra)
 saveGIF({
   n <- 11
-  for (i in 1:n) {
-    grid.arrange(PlotRandomFunctions(i, n), PlotRandomFunctions(n, n), ncol=2)
+  for (i in 1:(n + 1)) {
+    print(PlotRandomFunctions(i, n))
   }
 }, movie.name='random_functions.gif',
 outdir=gif.output.directory,
@@ -206,6 +205,7 @@ saveGIF({
     old.num <- num
     num <- num * 3
   }
+  print(twod_scatterplot(num, old.num))
 }, movie.name='2d_scatterplot.gif',
 outdir=gif.output.directory,
 clean=TRUE, interval=4, ani.dev='CairoPNG',
