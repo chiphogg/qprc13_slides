@@ -279,11 +279,11 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ## Many variables
 
-```{r many.side.by.side.function}
+```{r many.side.by.side.function, cache=FALSE}
 many_side_by_side <- function(k, n, i) {
-  set.seed(2)
+  set.seed(3)
   X <- 1:k
-  K <- 0.96 ^ abs(outer(X, X, "-"))
+  K <- 0.9 ^ abs(outer(X, X, function(x, y) (x - y) ^ 2))
   L <- t(chol(K))
   x <- L %*% matrix(rnorm(n=k * n), nrow=k)
   d <- data.frame(X=t(x))
@@ -296,8 +296,7 @@ many_side_by_side <- function(k, n, i) {
   p <- (ggplot(data=d_melt, aes(x=as.numeric(substring(variable, 3)), y=value, group=id, colour=highlight))
     + geom_point(size=4)
     + geom_line(size=1.5)
-    #+ scale_x_continuous("variable", breaks=1:k, labels=paste("X", 1:k, sep=''))
-    + scale_x_continuous("variable", breaks=c(1, k), labels=c('a', 'b'))
+    + scale_x_continuous("variable", breaks=1:k, labels=paste("X", 1:k, sep=''))
     + scale_y_continuous("value", limits=c(-lim, lim))
     + scale_colour_manual("", values=c(yes='red', no='grey50'))
     + theme(legend.position='none')
