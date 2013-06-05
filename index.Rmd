@@ -38,6 +38,8 @@ gif.output.directory <- paste(getwd(), 'custom', sep='/')
 
 # Overview
 
+<img style='float: left;' src='custom/plate.jpg'>
+
 ```{r steel-strain-vars, include=FALSE}
 load("custom/trained.RO")
 x.gap.surface <- GriddedConvexHull(X=d.gap$X, spacing=0.2)
@@ -47,88 +49,21 @@ M.aniso$SetNoiseBounds(sigma.vals=2e-6)
 L.strain <- M.aniso$L(d=d.strain, X.out=x.gap.surface)
 ```
 
-```{r strain-datapoints, webgl=TRUE, fig.height=7}
+```{r strain-datapoints, webgl=TRUE, fig.height=3.5}
 d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
 ```
 
-The basic story is this.
+Automotive application: stronger, lighter steels
 
-We've got a metal plate, and we stretch it.  So there's some amount of strain at
-every point on this surface.  We've measured this strain function at a bunch of
-points, but we wish we knew it everywhere.  We wish we knew this _strain
-surface_, if you like.  We have some idea about it, but we're not completely
-certain.
+  - **Goal**: relate *stress* and *strain* at **same point** on material
+  - **Problem**: measurements are incompatible!
+  - **Solution**: measure surroundings; infer in the gap
 
-So, first question: how uncertain _are_ we?  You see we'll need a sensible way
-to _quantify_ uncertainty in _continuous functions_.
+<aside>Collaboration with Adam Creuziger and Mark Iadicola at NIST</aside>
 
 ---
 
-# Probabilities for functions
-
-Great narrative for great justice!
-
-1. What we wish we had
-  - _Individual_ random quantities (like rolls of a die) are easier to understand
-  - Show a bunch of random draws of functions.  ("WAT.")
-    - Here, the probabilities don't matter; what matters are the functions in the distribution.
-2. Simpler case: two random numbers.
-  - Show on scatterplot.
-    - Familiar, and great, visualization!  But it **doesn't scale**.
-3. Simpler case; alternative view
-  - Show side-by-side with scatterplot: random variables next to each other
-    - Connect them by lines... hmm!  Suggestive!!
-4. Lots of variables
-5. Return to scatterplot view
-  - nice animated gif
-
-Maybe then talk about GPs: use the simplest multivariate probability distribution.
-
----
-
-## Probability example: rolling dice
-
-TODO: plot this in a way which suggests individual draws.  Maybe scatterplot?
-vertical axis: 2 through 12.  Horizontal axis: index.
-
-```{r dice.plot.function}
-global_dice_rolls <<- c()
-dice_plot <- function(n, rolls) {
-  set.seed(1)
-  n.prime <- n - length(global_dice_rolls)
-  if (n.prime < 0) return (NULL)
-  global_dice_rolls <<- c(global_dice_rolls,
-    round(runif(n=n.prime, min=0.5, max=6.5))
-    + round(runif(n=n.prime, min=0.5, max=6.5)))
-  d <- data.frame(x=global_dice_rolls)
-  p <- (ggplot(data=d, aes(x=x))
-    + geom_histogram(binwidth=1, colour='white', origin=0.5)
-    + scale_x_continuous("Total", limits=c(1, 13),
-      breaks=seq(from=2, to=12, by=2))
-    + scale_y_continuous("", breaks=rolls)
-    + ggtitle(sprintf("Rolling 2 dice %d times", n))
-    )
-  return (p)
-}
-```
-
-```{r make.gif, include=FALSE}
-set.seed(5)
-library(animation)
-saveGIF({
-  # Make the animation
-  rolls <- as.vector(outer(c(2, 5, 10), 10^(0:3)))
-  rolls <- c(rolls, rep(tail(rolls, n=1), 4))
-  for (i in rolls) {
-    print(dice_plot(i, rolls))
-  }
-}, movie.name='dice.gif',
-outdir=gif.output.directory,
-clean=TRUE, interval=1.2, ani.dev='CairoPNG',
-ani.width=150 * 6.5, ani.height=150 * 3.5)
-```
-
-<img src="custom/dice.gif">
+## Probabilities for functions
 
 ---
 
@@ -337,7 +272,7 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ---
 
-## Covariance is Key
+## Covariance function
 
 ```{r slider.function, include=FALSE, cache=FALSE}
 SlidingVariables <- function(n_lines, n_points,
@@ -395,7 +330,7 @@ SlidingVariables <- function(n_lines, n_points,
 }
 ```
 
-```{r slider.figure, include=FALSE, cache=FALSE}
+```{r slider.figure, include=FALSE}
 set.seed(1)
 library(animation)
 n_frames <- 50
@@ -426,10 +361,6 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ---
 
-## What's the probability of a function?
-
----
-
 ## Another view
 
 Gaussian process machinery:
@@ -441,23 +372,7 @@ Gaussian process machinery:
 
 ---
 
-## Also worth mentioning
-
-Gaussian processes were used by the BEST collaboration (solved problems with
-time series, etc.)
-
----
-
-# Steel strain results
-
-What do I actually want to show?
-
-  1. mean surface
-  2. +- 1 sigma: show low uncertainty
-  3. +- 1 sigma with actual datapoints
-  4. +- 2 (or 3) sigma: no outliers?
-
-Alternative slide: animations?  Only if I have time.
+## Results
 
 ---
 
@@ -481,7 +396,13 @@ PlotSurface(X=x.gap.surface, Y=post.gap$lower, color='red', alpha=0.3)
 
 ---
 
-## Steel strain results: true datapoints
+## Animated steel strain results
+
+<img src='custom/steel_strain.gif'>
+
+---
+
+## True datapoints
 
 ```{r fig.height=7, webgl=TRUE}
 d.strain$Plot2D(dist.factor=0.15, max.points=Inf, Y.scale=500)
@@ -493,7 +414,7 @@ d.gap$Plot2D(dist.factor=0.15, max.points=Inf, clear=FALSE, col="grey")
 
 ---
 
-# Feedback to the experiment
+## Feedback to the experiment
 
 ```{r common-parameters, include=FALSE, cache=FALSE}
 diameter_to_show <- 8
@@ -619,7 +540,7 @@ PlotAggregateError <- function(results, gap.size) {
   }
   d$highlight <- 'no'
   d$highlight[which(d$gap == gap.size)] <- 'yes'
-  p <- (ggplot(data=d, aes(x=error, colour=gap))
+  p <- (ggplot(data=d, aes(x=abs(error), colour=gap))
     + stat_ecdf(aes(size=highlight), show_guide=FALSE)
     + scale_x_log10()
     + scale_y_continuous()
@@ -710,7 +631,7 @@ ani.width=150 * 3.5, ani.height=150 * 3.5)
 
 ---
 
-## Uncertainty vs. gap size: cumulative statistics
+## Uncertainty vs. all gap sizes
 
 ```{r gap.size.uncertainty2, include=FALSE}
 set.seed(1)
@@ -753,7 +674,7 @@ ani.width=150 * 3.5, ani.height=150 * 3.5)
 
 ---
 
-## Error vs. gap size: cumulative statistics
+## Error vs. all gap sizes
 
 ```{r gap.size.error2, include=FALSE}
 set.seed(1)
@@ -809,4 +730,4 @@ ani.width=150 * 3.5, ani.height=150 * 3.5)
 
 ---
 
-# Conclusions
+## Thank you!

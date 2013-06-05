@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Quantifying Uncertainty to Build Better Experiments</title>
+  <title>Quantifying Uncertainty</title>
   <meta charset="utf-8">
-  <meta name="description" content="Quantifying Uncertainty to Build Better Experiments">
+  <meta name="description" content="Quantifying Uncertainty">
   <meta name="author" content="Charles Hogg">
   <meta name="generator" content="slidify" />
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,8 @@
     src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
   </script>
   
-    <link rel="stylesheet" href = "assets/css/ribbons.css">
+    <link rel="stylesheet" href = "assets/css/custom.css">
+<link rel="stylesheet" href = "assets/css/ribbons.css">
 
 </head>
 <body style="opacity: 0">
@@ -32,8 +33,8 @@
     <!-- Should I move this to a Local Layout File? -->
     <slide class="title-slide segue nobackground">
       <hgroup class="auto-fadein">
-        <h1>Quantifying Uncertainty to Build Better Experiments</h1>
-        <h2></h2>
+        <h1>Quantifying Uncertainty</h1>
+        <h2>to Build Better Experiments</h2>
         <p>Charles Hogg<br/>Google, Inc.</p>
       </hgroup>
           </slide>
@@ -44,18 +45,19 @@
     <h1>Overview</h1>
   </hgroup>
   <article>
-    <iframe src="rgl_strain-datapoints.html" width="936" height="504"></iframe>
+    <p><img style='float: left;' src='custom/plate.jpg'></p>
 
-<p>The basic story is this.</p>
+<iframe src="rgl_strain-datapoints.html" width="936" height="252"></iframe>
 
-<p>We&#39;ve got a metal plate, and we stretch it.  So there&#39;s some amount of strain at
-every point on this surface.  We&#39;ve measured this strain function at a bunch of
-points, but we wish we knew it everywhere.  We wish we knew this <em>strain
-surface</em>, if you like.  We have some idea about it, but we&#39;re not completely
-certain.</p>
+<p>Automotive application: stronger, lighter steels</p>
 
-<p>So, first question: how uncertain <em>are</em> we?  You see we&#39;ll need a sensible way
-to <em>quantify</em> uncertainty in <em>continuous functions</em>.</p>
+<ul>
+<li><strong>Goal</strong>: relate <em>stress</em> and <em>strain</em> at <strong>same point</strong> on material</li>
+<li><strong>Problem</strong>: measurements are incompatible!</li>
+<li><strong>Solution</strong>: measure surroundings; infer in the gap</li>
+</ul>
+
+<p><aside>Collaboration with Adam Creuziger and Mark Iadicola at NIST</aside></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -63,60 +65,15 @@ to <em>quantify</em> uncertainty in <em>continuous functions</em>.</p>
 
       <slide class="" id="slide-2" style="background:;">
   <hgroup>
-    <h1>Probabilities for functions</h1>
+    <h2>Probabilities for functions</h2>
   </hgroup>
   <article>
-    <p>Great narrative for great justice!</p>
-
-<ol>
-<li>What we wish we had
-
-<ul>
-<li><em>Individual</em> random quantities (like rolls of a die) are easier to understand</li>
-<li>Show a bunch of random draws of functions.  (&quot;WAT.&quot;)</li>
-<li>Here, the probabilities don&#39;t matter; what matters are the functions in the distribution.</li>
-</ul></li>
-<li>Simpler case: two random numbers.
-
-<ul>
-<li>Show on scatterplot.</li>
-<li>Familiar, and great, visualization!  But it <strong>doesn&#39;t scale</strong>.</li>
-</ul></li>
-<li>Simpler case; alternative view
-
-<ul>
-<li>Show side-by-side with scatterplot: random variables next to each other</li>
-<li>Connect them by lines... hmm!  Suggestive!!</li>
-</ul></li>
-<li>Lots of variables</li>
-<li>Return to scatterplot view
-
-<ul>
-<li>nice animated gif</li>
-</ul></li>
-</ol>
-
-<p>Maybe then talk about GPs: use the simplest multivariate probability distribution.</p>
-
+    
   </article>
   <!-- Presenter Notes -->
 </slide>
 
       <slide class="" id="slide-3" style="background:;">
-  <hgroup>
-    <h2>Probability example: rolling dice</h2>
-  </hgroup>
-  <article>
-    <p>TODO: plot this in a way which suggests individual draws.  Maybe scatterplot?
-vertical axis: 2 through 12.  Horizontal axis: index.</p>
-
-<p><img src="custom/dice.gif"></p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-      <slide class="" id="slide-4" style="background:;">
   <hgroup>
     <h2>Random functions (?)</h2>
   </hgroup>
@@ -127,7 +84,7 @@ vertical axis: 2 through 12.  Horizontal axis: index.</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-5" style="background:;">
+      <slide class="" id="slide-4" style="background:;">
   <hgroup>
     <h2>Two variables</h2>
   </hgroup>
@@ -138,7 +95,7 @@ vertical axis: 2 through 12.  Horizontal axis: index.</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-6" style="background:;">
+      <slide class="" id="slide-5" style="background:;">
   <hgroup>
     <h2>Two variables: alternative view</h2>
   </hgroup>
@@ -149,7 +106,7 @@ vertical axis: 2 through 12.  Horizontal axis: index.</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-7" style="background:;">
+      <slide class="" id="slide-6" style="background:;">
   <hgroup>
     <h2>Many variables</h2>
   </hgroup>
@@ -160,9 +117,9 @@ vertical axis: 2 through 12.  Horizontal axis: index.</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-8" style="background:;">
+      <slide class="" id="slide-7" style="background:;">
   <hgroup>
-    <h2>Covariance is Key</h2>
+    <h2>Covariance function</h2>
   </hgroup>
   <article>
     <p><img src="custom/slide_and_scatter.gif"></p>
@@ -171,17 +128,7 @@ vertical axis: 2 through 12.  Horizontal axis: index.</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-9" style="background:;">
-  <hgroup>
-    <h2>What&#39;s the probability of a function?</h2>
-  </hgroup>
-  <article>
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-      <slide class="" id="slide-10" style="background:;">
+      <slide class="" id="slide-8" style="background:;">
   <hgroup>
     <h2>Another view</h2>
   </hgroup>
@@ -203,39 +150,17 @@ function (it&#39;s fine if they&#39;re noisy).</li>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-11" style="background:;">
+      <slide class="" id="slide-9" style="background:;">
   <hgroup>
-    <h2>Also worth mentioning</h2>
+    <h2>Results</h2>
   </hgroup>
   <article>
-    <p>Gaussian processes were used by the BEST collaboration (solved problems with
-time series, etc.)</p>
-
+    
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-12" style="background:;">
-  <hgroup>
-    <h1>Steel strain results</h1>
-  </hgroup>
-  <article>
-    <p>What do I actually want to show?</p>
-
-<ol>
-<li>mean surface</li>
-<li>+- 1 sigma: show low uncertainty</li>
-<li>+- 1 sigma with actual datapoints</li>
-<li>+- 2 (or 3) sigma: no outliers?</li>
-</ol>
-
-<p>Alternative slide: animations?  Only if I have time.</p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-      <slide class="" id="slide-13" style="background:;">
+      <slide class="" id="slide-10" style="background:;">
   <hgroup>
     <h2>Steel strain results: mean surface</h2>
   </hgroup>
@@ -246,7 +171,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-14" style="background:;">
+      <slide class="" id="slide-11" style="background:;">
   <hgroup>
     <h2>Steel strain results: with 1-sigma uncertainty</h2>
   </hgroup>
@@ -257,9 +182,20 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-15" style="background:;">
+      <slide class="" id="slide-12" style="background:;">
   <hgroup>
-    <h2>Steel strain results: true datapoints</h2>
+    <h2>Animated steel strain results</h2>
+  </hgroup>
+  <article>
+    <p><img src='custom/steel_strain.gif'></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>True datapoints</h2>
   </hgroup>
   <article>
     <iframe src="rgl_unnamed-chunk-3.html" width="936" height="504"></iframe>
@@ -268,9 +204,9 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-16" style="background:;">
+      <slide class="" id="slide-14" style="background:;">
   <hgroup>
-    <h1>Feedback to the experiment</h1>
+    <h2>Feedback to the experiment</h2>
   </hgroup>
   <article>
     
@@ -278,7 +214,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-17" style="background:;">
+      <slide class="" id="slide-15" style="background:;">
   <hgroup>
     <h2>Gap width: ripe for tuning</h2>
   </hgroup>
@@ -289,7 +225,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-18" style="background:;">
+      <slide class="" id="slide-16" style="background:;">
   <hgroup>
     <h2>Gap width: ripe for tuning</h2>
   </hgroup>
@@ -300,7 +236,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-19" style="background:;">
+      <slide class="" id="slide-17" style="background:;">
   <hgroup>
     <h2>Uncertainty vs. gap size</h2>
   </hgroup>
@@ -311,9 +247,9 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-20" style="background:;">
+      <slide class="" id="slide-18" style="background:;">
   <hgroup>
-    <h2>Uncertainty vs. gap size: cumulative statistics</h2>
+    <h2>Uncertainty vs. all gap sizes</h2>
   </hgroup>
   <article>
     <p><img src="custom/uncertainty2.gif"></p>
@@ -322,7 +258,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-21" style="background:;">
+      <slide class="" id="slide-19" style="background:;">
   <hgroup>
     <h2>Error vs. gap size</h2>
   </hgroup>
@@ -333,9 +269,9 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-22" style="background:;">
+      <slide class="" id="slide-20" style="background:;">
   <hgroup>
-    <h2>Error vs. gap size: cumulative statistics</h2>
+    <h2>Error vs. all gap sizes</h2>
   </hgroup>
   <article>
     <p><img src="custom/error2.gif"></p>
@@ -344,7 +280,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-23" style="background:;">
+      <slide class="" id="slide-21" style="background:;">
   <hgroup>
     <h2>Normalized error vs. gap size</h2>
   </hgroup>
@@ -355,7 +291,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-24" style="background:;">
+      <slide class="" id="slide-22" style="background:;">
   <hgroup>
     <h2>Rutherford&#39;s criticism</h2>
   </hgroup>
@@ -366,7 +302,7 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-25" style="background:;">
+      <slide class="" id="slide-23" style="background:;">
   <hgroup>
     <h2>Rutherford&#39;s criticism, Bayes&#39; response</h2>
   </hgroup>
@@ -378,9 +314,9 @@ time series, etc.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-26" style="background:;">
+      <slide class="" id="slide-24" style="background:;">
   <hgroup>
-    <h1>Conclusions</h1>
+    <h2>Thank you!</h2>
   </hgroup>
   <article>
     
