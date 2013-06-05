@@ -36,7 +36,7 @@ gif.output.directory <- paste(getwd(), 'custom', sep='/')
 
 ---
 
-# Overview
+## Overview
 
 <img style='float: left;' src='custom/plate.jpg'>
 
@@ -361,14 +361,64 @@ ani.width=150 * 6.5, ani.height=150 * 3.5)
 
 ---
 
-## Another view
+## From prior to posterior
 
-Gaussian process machinery:
-  - There's some function you wish you knew.
-  - Give the machinery some arbitrary number of points where you know the
-    function (it's fine if they're noisy).
-  - Ask it for the values of the function at some other set of points
-    - The key is: look at those values **simultaneously**.
+```{r bayes.example, fig.height=7.5}
+set.seed(5)
+x_min <- 0
+x_max <- 5
+n_in <- 12
+n_out <- 100
+x_in <- runif(min=x_min, max=x_max, n=n_in)
+x_out <- runif(min=x_min, max=x_max, n=n_out)
+dy <- 0.05
+y_in <- sin(pi * x_in) / sqrt(pi * x_in) + rnorm(n=n_in, sd=dy)
+d_in <- data.frame(x=x_in, y=y_in, dy=dy)
+p <- (ggplot(data=d_in, aes(x=x))
+  + geom_point(aes(y=y))
+  + geom_errorbar(aes(ymin=y-dy, ymax=y+dy))
+  + scale_x_continuous("", limits=c(x_min, x_max))
+  )
+print (p)
+```
+
+```{r bayes.example.functions, include=FALSE}
+M <- Model("model")
+Cov <- CovarianceSE(ell.bounds=c(0.1, 2.0), sigma.f.bounds=c(0.01, 1))
+M$AddCovariance(Cov)
+M$SetNoiseBounds(sigma.vals=0.05)
+d <- Dataset(id="d", data=d_in, X.names='x', column='y')
+M$Train(d=d)
+y_out <- M$PosteriorMean(d=d, X.out=x_out)
+L_out <- M$L(d=d, X.out=x_out)
+N_functions <- 8
+saveGIF({
+  for (i in 1:N_functions) {
+    set.seed(1)
+    seeds <- matrix(rnorm(n=N_functions * n_out), nrow=n_out)
+    d_draws <- data.frame(L_out %*% seeds[, 1:i] + rep(y_out, i))
+    d_draws$x <- x_out
+    require(reshape2)
+    d_melt <- melt(d_draws, id.vars='x')
+    print(p
+      + geom_point(data=d_melt, aes(x=x, y=value, colour=variable))
+      #+ geom_line(data=d_melt, aes(x=x, y=value, colour=variable))
+      + scale_colour_brewer("", palette="Set1")
+      + theme(legend.position='none')
+      + scale_y_continuous("", limits=range(L_out %*% seeds + rep(y_out, N_functions)))
+      )
+  }
+}, movie.name='posterior.gif',
+outdir=gif.output.directory,
+clean=TRUE, interval=3, ani.dev='CairoPNG',
+ani.width=150 * 6.5, ani.height=150 * 3.5)
+```
+
+---
+
+## From prior to posterior
+
+<img src='custom/posterior.gif'>
 
 ---
 

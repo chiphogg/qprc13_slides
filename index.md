@@ -1,6 +1,6 @@
 ---
-title       : Quantifying Uncertainty
-subtitle    : to Build Better Experiments
+title       : Quantifying Uncertainty to Build Better Experiments
+subtitle    : 
 author      : Charles Hogg
 job         : Google, Inc.
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
@@ -14,7 +14,7 @@ mode        : selfcontained # {standalone, draft}
 
 ---
 
-# Overview
+## Overview
 
 <img style='float: left;' src='custom/plate.jpg'>
 
@@ -98,14 +98,19 @@ Automotive application: stronger, lighter steels
 
 ---
 
-## Another view
+## From prior to posterior
 
-Gaussian process machinery:
-  - There's some function you wish you knew.
-  - Give the machinery some arbitrary number of points where you know the
-    function (it's fine if they're noisy).
-  - Ask it for the values of the function at some other set of points
-    - The key is: look at those values **simultaneously**.
+![plot of chunk bayes.example](figure/bayes.example.png) 
+
+
+
+
+
+---
+
+## From prior to posterior
+
+<img src='custom/posterior.gif'>
 
 ---
 
