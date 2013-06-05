@@ -1,5 +1,5 @@
 ---
-title       : 
+title       : Quantifying Uncertainty to Build Better Experiments
 subtitle    : 
 author      : Charles Hogg
 job         : Google, Inc.
@@ -15,6 +15,12 @@ mode        : selfcontained # {standalone, draft}
 ---
 
 # Overview
+
+
+
+
+<iframe src="rgl_strain-datapoints.html" width="936" height="504"></iframe>
+
 
 The basic story is this.
 
@@ -150,12 +156,6 @@ time series, etc.)
 
 # Steel strain results
 
-
-
-
-
-<iframe src="rgl_strain-datapoints.html" width="936" height="504"></iframe>
-
 What do I actually want to show?
 
   1. mean surface
@@ -257,13 +257,14 @@ Alternative slide: animations?  Only if I have time.
 
 ## Rutherford's criticism
 
-(pic of Rutherford)
+<img style='height: 500px' src='./my_figures/rutherford_better.png'>
 
-"If your experiment needs statistics, you ought to have done a better experiment."
+---
 
-Response: "Better statistics can lead you to that better experiment"
+## Rutherford's criticism, Bayes' response
 
-(Show as memes?  Pic of Bayes...)
+<img style='height: 500px' src='my_figures/rutherford_better.png'>
+<img style='height: 500px' src='my_figures/bayes_better_statistics.png'>
 
 ---
 
