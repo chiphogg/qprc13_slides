@@ -1,0 +1,29 @@
+#!/bin/bash
+
+ERR_BAD_ARG_CNT=1
+ERR_DIR_EXISTS=2
+
+Usage() { echo "Usage: ${0##*/} <export-directory>"; exit "$1"; }
+Die() { echo "${0##*/}: fatal: $1"; exit "$2"; }
+
+# Make sure the user supplied an export directory.
+[ $# -eq 1 ] || Usage "$ERR_BAD_ARG_CNT"
+
+# Make sure the export directory doesn't already exist.
+[ -e "$1" ] && Die "Directory already exists: $1" "$ERR_DIR_EXISTS"
+
+# Copy needed output files to export directory.
+mkdir -p "$1"
+for I in index.html assets custom/*.{gif,jpg} inkscape libraries my_figures\
+  rgl* CanvasMatrix.js figure/bayes.example.png
+do
+  BASE=${I%/*}
+  if [ "$BASE" != "$I" ] 
+  then
+    END=${I##*/}
+    mkdir -p "$1/$BASE"
+    cp -R "$I" "$1/$BASE"
+  else
+    cp -R "$I" "$1"
+  fi
+done
